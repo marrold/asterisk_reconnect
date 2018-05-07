@@ -1,36 +1,33 @@
-### Introduction
+## Introduction
 
 asterisk_reconnect is a tool to periodically check that a list of clients are connected to Asterisk, and if they are not connected it will attempt to reconnect them and drop them into the specified context and extension.
 
+## Features
 
-### Features
-
-* Periodically checks which clients are connected to Asterisk via the AMI. 
+* Periodically checks which clients are connected to Asterisk via the AMI.
 * If a client is not connected, asterisk_reconnect will attempt to reconnect.
 * Check intervals, retry intervals and clients, contexts and extensions are fully customisable.
+* Works with SIP Clients. Other channel types are untested.
 
-
-### Caveats
+## Caveats
 
 * asterisk_reconnect is designed for python 3 only!
 * To date, this has only been tested on a Debian based, AllStar Asterisk (1.8) system
 * It's important you secure your .cfg file, as anyone with access to the configuration can dial any client (Fraud Risk)
 
 
-### Quick Install
+## Quick Install
 
 Change to root:
 
     sudo su
 
-
-##### Clone the repo
+#### Clone the repo
 
     cd /opt/
     git clone https://github.com/marrold/asterisk_reconnect.git
 
-##### Install required dependancies
-
+#### Install required dependancies
 
 Change into the directory:
 
@@ -41,8 +38,7 @@ Install requirements:
     pip3 install -r requirements.txt
 
 
-##### Edit the configuration
-
+#### Edit the configuration
 
 Copy/Rename the sample configuration:
 
@@ -57,12 +53,12 @@ Check it runs:
     python3 asterisk_reconnect.py
 
 
-##### Tweak Asterisk
+#### Tweak Asterisk
 
 In order for Asterisk to mark calls as down, it needs a method of detecting lack of activity on a channel. Theres two methods documented below.
 
 
-###### rtptimeout
+##### rtptimeout
 
 In order for this to work your 'client' will need to always send RTP, even when silent / muted / on hold etc:
 
@@ -74,9 +70,9 @@ Add the following in the `[general]` section:
 
     rtptimeout=60
 
-###### session-timers
+##### session-timers
 
-If you're application intentionally stops sending RTP occasionally , you can enable session-timers to detect when a call drops. This will require a client with [RFC4028](https://tools.ietf.org/html/rfc4028) support, and will be slower than the `rtptimeout` method.
+If you're application intentionally stops sending RTP occasionally , you can enable session-timers to detect when a call drops. This will require a client with [RFC4028](https://tools.ietf.org/html/rfc4028) support, and detecting a dropped call will potentially take longer than the `rtptimeout` method.
 
 Open sip.conf for editing
 
@@ -90,7 +86,7 @@ Add the following in the `[general]` section:
     session-refresher=uac
 
 
-##### Start asterisk_reconnect on boot
+#### Start asterisk_reconnect on boot
 
 The following assumes you're using a systemd based OS such as Debian 9.
 
@@ -108,10 +104,10 @@ Enter the following:
     User=root
     WorkingDirectory=/opt/asterisk_reconnect
     ExecStart=/usr/bin/python3 /opt/asterisk_reconnect/asterisk_reconnect.py
-    
+
     [Install]
     WantedBy=multi-user.target
-    
+
 Make it executable:
 
     chmod 755 /lib/systemd/system/asterisk_reconnect.service
@@ -125,12 +121,11 @@ Enable the service:
     systemctl enable asterisk_reconnect.service
 
 
-### Additional Configuration
+## Additional Configuration
 
+### Logging
 
-#### Logging
-
-###### Configuration File Options
+##### Configuration File Options
 
 * **log_file** - Path for log file
 * **log_handlers** - Comma separated list of log handlers (see below)
@@ -142,7 +137,7 @@ The following config options are optional and only apply to rotating handlers. F
 * **rotate_interval** - How often to rotate log
 * **backup_count** - How many previous logs to store before deletion
 
-###### Handlers
+##### Handlers
 
 * **null** - No logging
 * **console** - Print to console
@@ -154,12 +149,12 @@ The following config options are optional and only apply to rotating handlers. F
 * **syslog** - Write to syslog
 
 
-### Licence
+## Licence
 
 This project is licensed under the [Creative Commons CC BY-NC-SA 4.0](https://creativecommons.org/licenses/by-nc-sa/4.0/) licence.
 
 You are free to share and adapt the code as required, however you *must* give appropriate credit and indicate what changes have been made. You must also distribute your adaptation under the same license. Commercial use is prohibited.
 
-### Acknowledgments
+## Acknowledgements
 
 Thanks to everyone who contributed to the various modules utilised within this project.
